@@ -12,5 +12,5 @@ func _process(delta):
 	if camera == null: return
 	
 	if bottom_right.global_position.x <= camera.get_total_pos().x:
-		queue_free() 
+		queue_free()
 	pass
