@@ -1,0 +1,59 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scripts/pipe.gd" type="Script" id=1]
+[ext_resource path="res://sprites/pipe_green_top.png" type="Texture" id=2]
+[ext_resource path="res://sprites/pipe_green_bottom.png" type="Texture" id=3]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 13, 80 )
+
+[sub_resource type="RectangleShape2D" id=2]
+
+custom_solver_bias = 0.0
+extents = Vector2( 13, 80 )
+
+[node name="pipe" type="StaticBody2D" index="0"]
+
+z_index = -1
+input_pickable = false
+collision_layer = 1
+collision_mask = 1
+constant_linear_velocity = Vector2( 0, 0 )
+constant_angular_velocity = 0.0
+friction = 1.0
+bounce = 0.0
+script = ExtResource( 1 )
+_sections_unfolded = [ "Z Index" ]
+
+[node name="sprite_top" type="Sprite" parent="." index="0"]
+
+position = Vector2( 0, -101 )
+texture = ExtResource( 2 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="sprite_bottom" type="Sprite" parent="." index="1"]
+
+position = Vector2( 0, 101 )
+texture = ExtResource( 3 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="shape_top" type="CollisionShape2D" parent="." index="2"]
+
+position = Vector2( 0, -101 )
+shape = SubResource( 1 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="shape_bottom" type="CollisionShape2D" parent="." index="3"]
+
+position = Vector2( 0, 101 )
+shape = SubResource( 2 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="right" type="Position2D" parent="." index="4"]
+
+position = Vector2( 13, 0 )
+_sections_unfolded = [ "Transform" ]
+
+

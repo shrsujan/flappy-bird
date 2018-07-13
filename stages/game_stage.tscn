@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/bird.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=2]
 [ext_resource path="res://scenes/spawner_ground.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/background.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/spawner_pipe.tscn" type="PackedScene" id=5]
 
 [node name="world" type="Node" index="0"]
 
@@ -39,5 +40,7 @@ script = ExtResource( 2 )
 [node name="spawner_ground" parent="." index="2" instance=ExtResource( 3 )]
 
 [node name="background" parent="." index="3" instance=ExtResource( 4 )]
+
+[node name="spawner_pipe" parent="." index="4" instance=ExtResource( 5 )]
 
 
