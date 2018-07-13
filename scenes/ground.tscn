@@ -1,8 +1,14 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://sprites/ground.png" type="Texture" id=1]
+[ext_resource path="res://scripts/ground.gd" type="Script" id=1]
+[ext_resource path="res://sprites/ground.png" type="Texture" id=2]
 
-[node name="ground" type="StaticBody2D"]
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 84, 28 )
+
+[node name="ground" type="StaticBody2D" index="0"]
 
 position = Vector2( 0, 256 )
 input_pickable = false
@@ -12,15 +18,25 @@ constant_linear_velocity = Vector2( 0, 0 )
 constant_angular_velocity = 0.0
 friction = 1.0
 bounce = 0.0
+script = ExtResource( 1 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Sprite" type="Sprite" parent="." index="0"]
 
-texture = ExtResource( 1 )
+texture = ExtResource( 2 )
 centered = false
 offset = Vector2( 0, -56 )
 _sections_unfolded = [ "Offset" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
+
+position = Vector2( 84, -28 )
+shape = SubResource( 1 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="bottom_right" type="Position2D" parent="." index="2"]
+
+position = Vector2( 168, 0 )
+_sections_unfolded = [ "Transform" ]
 
 
