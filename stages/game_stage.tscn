@@ -1,8 +1,10 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://sprites/background_day.png" type="Texture" id=1]
-[ext_resource path="res://stages/bird.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/bird.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=3]
+
+
 
 [node name="Node" type="Node" index="0"]
 
