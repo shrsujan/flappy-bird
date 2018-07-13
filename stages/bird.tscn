@@ -14,7 +14,7 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[node name="bird" type="RigidBody2D" index="0"]
+[node name="bird" type="RigidBody2D"]
 
 position = Vector2( 36, 97 )
 input_pickable = false
