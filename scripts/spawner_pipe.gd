@@ -10,6 +10,16 @@ const OFFSET_Y = 55
 const AMOUNT_TO_FILL_VIEW = 3
 
 func _ready():
+	var bird = utils.get_main_node().get_node("bird")
+	if bird:
+		bird.connect("state_changed", self, "_on_bird_state_changed", [], CONNECT_ONESHOT)
+	pass
+
+func _on_bird_state_changed(bird):
+	if bird.get_state() == bird.STATE_FLAPPING:
+		start()
+
+func start():
 	go_int_pos()
 	
 	for i in AMOUNT_TO_FILL_VIEW:
@@ -22,6 +32,11 @@ func go_int_pos():
 	var init_pos = Vector2()
 	init_pos.x = get_viewport_rect().size.x + PIPE_WIDTH/2
 	init_pos.y = rand_range(0 + OFFSET_Y, get_viewport_rect().size.y - GROUND_HEIGHT - OFFSET_Y)
+	
+	var camera = utils.get_main_node().get_node("camera")
+	if camera:
+		init_pos.x += camera.get_total_pos().x
+	
 	self.position = init_pos
 	pass
 
