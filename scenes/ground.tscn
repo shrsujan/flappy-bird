@@ -39,4 +39,6 @@ _sections_unfolded = [ "Transform" ]
 position = Vector2( 168, 0 )
 _sections_unfolded = [ "Transform" ]
 
+[connection signal="tree_exited" from="." to="." method="_on_ground_tree_exited"]
+
 
