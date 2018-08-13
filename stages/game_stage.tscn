@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://scenes/bird.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=2]
@@ -6,8 +6,13 @@
 [ext_resource path="res://scenes/background.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/spawner_pipe.tscn" type="PackedScene" id=5]
 [ext_resource path="res://sprites/instructions.png" type="Texture" id=6]
-[ext_resource path="res://stages/hbox_score.gd" type="Script" id=7]
-[ext_resource path="res://sprites/number_large_0.png" type="Texture" id=8]
+[ext_resource path="res://sprites/number_large_0.png" type="Texture" id=7]
+[ext_resource path="res://sprites/label_game_over.png" type="Texture" id=8]
+[ext_resource path="res://sprites/panel_score.png" type="Texture" id=9]
+[ext_resource path="res://sprites/button_play_normal.png" type="Texture" id=10]
+[ext_resource path="res://sprites/button_play_pressed.png" type="Texture" id=11]
+[ext_resource path="res://sprites/button_score_normal.png" type="Texture" id=12]
+[ext_resource path="res://sprites/button_score_pressed.png" type="Texture" id=13]
 
 [sub_resource type="GDScript" id=1]
 
@@ -29,6 +34,134 @@ func _on_pressed():
 	hide()
 	pass"
 _sections_unfolded = [ "Resource" ]
+
+[sub_resource type="GDScript" id=2]
+
+resource_name = "hbox_score"
+script/source = "# script: hbox_score (built-in)
+
+extends HBoxContainer
+
+const sprite_numbers = [
+	preload(\"res://sprites/number_large_0.png\"),
+	preload(\"res://sprites/number_large_1.png\"),
+	preload(\"res://sprites/number_large_2.png\"),
+	preload(\"res://sprites/number_large_3.png\"),
+	preload(\"res://sprites/number_large_4.png\"),
+	preload(\"res://sprites/number_large_5.png\"),
+	preload(\"res://sprites/number_large_6.png\"),
+	preload(\"res://sprites/number_large_7.png\"),
+	preload(\"res://sprites/number_large_8.png\"),
+	preload(\"res://sprites/number_large_9.png\")
+]
+
+func _ready():
+	game.connect(\"score_current_changed\", self, \"_on_score_current_changed\")
+	set_number(game.score_current)
+	pass
+
+func _on_score_current_changed():
+	set_number(game.score_current)
+	pass
+
+func set_number(number):
+	for child in get_children():
+		child.queue_free()
+	
+	for digit in utils.get_digits(number):
+		var texture_rect = TextureRect.new()
+		texture_rect.set_texture(sprite_numbers[digit])
+		add_child(texture_rect)
+	pass"
+_sections_unfolded = [ "Resource" ]
+
+[sub_resource type="GDScript" id=3]
+
+script/source = "# script: cntr_gameover (built-in)
+
+extends Container
+
+func _ready():
+	var bird = utils.get_main_node().get_node(\"bird\")
+	if bird:
+		bird.connect(\"state_changed\", self, \"_on_bird_state_changed\")
+	pass
+
+func _on_bird_state_changed(bird):
+	if bird.get_state() == bird.STATE_GROUNDED:
+		get_node(\"anim\").play(\"show\")
+	pass"
+_sections_unfolded = [ "Resource" ]
+
+[sub_resource type="GDScript" id=4]
+
+script/source = "# script: btn_play (built-in)
+
+extends TextureButton
+
+func _ready():
+	connect(\"pressed\", self, \"_on_pressed\")
+	pass
+
+func _on_pressed():
+	get_tree().reload_current_scene()
+	pass"
+_sections_unfolded = [ "Resource" ]
+
+[sub_resource type="Animation" id=5]
+
+resource_name = "show"
+length = 1.0
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("tex_gameover:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.7 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("tex_gameover:rect_position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.7 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 24, 45 ), Vector2( 24, 50 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("tex_panelscore:rect_position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 0.25, 1 ),
+"update": 0,
+"values": [ Vector2( 16, 270 ), Vector2( 16, 90 ) ]
+}
 
 [node name="world" type="Node" index="0"]
 
@@ -121,6 +254,7 @@ _sections_unfolded = [ "Rect" ]
 
 [node name="hbox_score" type="HBoxContainer" parent="hud" index="1"]
 
+editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -136,7 +270,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 2
 alignment = 1
-script = ExtResource( 7 )
+script = SubResource( 2 )
 
 [node name="tex_number_0" type="TextureRect" parent="hud/hbox_score" index="0"]
 
@@ -153,7 +287,145 @@ mouse_filter = 1
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+texture = ExtResource( 7 )
+stretch_mode = 0
+
+[node name="cntr_gameover" type="Container" parent="hud" index="2"]
+
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 144.0
+margin_bottom = 256.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+script = SubResource( 3 )
+_sections_unfolded = [ "Visibility" ]
+
+[node name="tex_gameover" type="TextureRect" parent="hud/cntr_gameover" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 24.0
+margin_top = 50.0
+margin_right = 120.0
+margin_bottom = 71.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
 texture = ExtResource( 8 )
 stretch_mode = 0
+_sections_unfolded = [ "Material", "Rect", "Visibility" ]
+
+[node name="tex_panelscore" type="TextureRect" parent="hud/cntr_gameover" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 16.0
+margin_top = 90.0
+margin_right = 129.0
+margin_bottom = 147.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 9 )
+stretch_mode = 0
+_sections_unfolded = [ "Rect", "Visibility" ]
+
+[node name="hbox_buttons" type="HBoxContainer" parent="hud/cntr_gameover" index="2"]
+
+editor/display_folded = true
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 16.0
+margin_top = 160.0
+margin_right = 129.0
+margin_bottom = 189.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_constants/separation = 9
+alignment = 1
+
+[node name="btn_play" type="TextureButton" parent="hud/cntr_gameover/hbox_buttons" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 52.0
+margin_bottom = 29.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+texture_normal = ExtResource( 10 )
+texture_pressed = ExtResource( 11 )
+script = SubResource( 4 )
+_sections_unfolded = [ "Textures" ]
+
+[node name="btn_scores" type="TextureButton" parent="hud/cntr_gameover/hbox_buttons" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 61.0
+margin_right = 113.0
+margin_bottom = 29.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+texture_normal = ExtResource( 12 )
+texture_pressed = ExtResource( 13 )
+_sections_unfolded = [ "Textures" ]
+
+[node name="anim" type="AnimationPlayer" parent="hud/cntr_gameover" index="3"]
+
+root_node = NodePath("..")
+autoplay = ""
+playback_process_mode = 1
+playback_default_blend_time = 0.0
+playback_speed = 1.5
+anims/show = SubResource( 5 )
+blend_times = [  ]
+_sections_unfolded = [ "Playback Options" ]
 
 
