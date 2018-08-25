@@ -51,7 +51,7 @@ func spawn_pipe():
 	new_pipe.connect("tree_exited", self, "spawn_and_move")
 	
 	var container = get_node("container")
-	container.add_child(new_pipe)
+	container.call_deferred("add_child", new_pipe)
 	pass
 
 func go_next_pos():

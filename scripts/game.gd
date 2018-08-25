@@ -13,6 +13,11 @@ signal score_best_changed
 signal score_current_changed
 
 func _ready():
+	stage_manager.connect("stage_changed", self, "_on_stage_changed")
+	pass
+
+func _on_stage_changed():
+	score_current = 0
 	pass
 
 func _set_score_current(new_value):

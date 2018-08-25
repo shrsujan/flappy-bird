@@ -22,7 +22,7 @@ func spawn_ground():
 	new_ground.connect("tree_exited", self, "spawn_and_move")
 	
 	var container = get_node("container")
-	container.add_child(new_ground)
+	container.call_deferred("add_child", new_ground)
 	pass
 	
 func go_next_pos():	
