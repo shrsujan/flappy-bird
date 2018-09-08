@@ -17,6 +17,9 @@ func change_stage(stage_path):
 	is_changing = true
 	get_tree().get_root().set_disable_input(true)
 	
+	# make texture visible
+	get_node("tex_black").show()
+	
 	# fade to black
 	get_node("anim").play("fade_in")
 	yield(get_node("anim"), "animation_finished")
@@ -28,6 +31,9 @@ func change_stage(stage_path):
 	# fade from black
 	get_node("anim").play("fade_out")
 	yield(get_node("anim"), "animation_finished")
+	
+	# make texture invisible
+	get_node("tex_black").hide()
 	
 	is_changing = false
 	get_tree().get_root().set_disable_input(false)

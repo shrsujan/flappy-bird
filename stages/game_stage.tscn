@@ -204,7 +204,8 @@ script = ExtResource( 2 )
 
 [node name="hud" type="CanvasLayer" parent="." index="5"]
 
-layer = 6
+editor/display_folded = true
+layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
 scale = Vector2( 1, 1 )
@@ -294,6 +295,7 @@ stretch_mode = 0
 
 [node name="cntr_gameover" type="Container" parent="hud" index="2"]
 
+editor/display_folded = true
 visible = false
 anchor_left = 0.0
 anchor_top = 0.0
@@ -352,6 +354,7 @@ _sections_unfolded = [ "Rect", "Visibility" ]
 
 [node name="hbox_buttons" type="HBoxContainer" parent="hud/cntr_gameover" index="2"]
 
+editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
