@@ -2,12 +2,12 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/number_middle_7.png-f4d42feab66a9b6c86e32a703661e0d0.stex"
+path="res://.import/number_medium_0.png-8146fe8511d63a6916b7e1863bd3b3a3.stex"
 
 [deps]
 
-source_file="res://sprites/number_middle_7.png"
-dest_files=[ "res://.import/number_middle_7.png-f4d42feab66a9b6c86e32a703661e0d0.stex" ]
+source_file="res://sprites/number_medium_0.png"
+dest_files=[ "res://.import/number_medium_0.png-8146fe8511d63a6916b7e1863bd3b3a3.stex" ]
 
 [params]
 

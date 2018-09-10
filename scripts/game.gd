@@ -26,6 +26,7 @@ func _set_score_current(new_value):
 	pass
 
 func _set_score_best(new_value):
-	score_best = new_value
+	if new_value > score_best:
+		score_best = new_value
 	emit_signal("score_best_changed")
 	pass
