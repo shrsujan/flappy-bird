@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://scenes/bird.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=2]
@@ -10,10 +10,11 @@
 [ext_resource path="res://sprites/label_game_over.png" type="Texture" id=8]
 [ext_resource path="res://sprites/panel_score.png" type="Texture" id=9]
 [ext_resource path="res://sprites/number_medium_0.png" type="Texture" id=10]
-[ext_resource path="res://sprites/button_play_normal.png" type="Texture" id=11]
-[ext_resource path="res://sprites/button_play_pressed.png" type="Texture" id=12]
-[ext_resource path="res://sprites/button_score_normal.png" type="Texture" id=13]
-[ext_resource path="res://sprites/button_score_pressed.png" type="Texture" id=14]
+[ext_resource path="res://sprites/label_new.png" type="Texture" id=11]
+[ext_resource path="res://sprites/button_play_normal.png" type="Texture" id=12]
+[ext_resource path="res://sprites/button_play_pressed.png" type="Texture" id=13]
+[ext_resource path="res://sprites/button_score_normal.png" type="Texture" id=14]
+[ext_resource path="res://sprites/button_score_pressed.png" type="Texture" id=15]
 
 [sub_resource type="GDScript" id=1]
 
@@ -58,11 +59,20 @@ const sprite_numbers = [
 
 func _ready():
 	game.connect(\"score_current_changed\", self, \"_on_score_current_changed\")
+	var bird = utils.get_main_node().get_node(\"bird\")
+	if bird:
+		bird.connect(\"state_changed\", self, \"_on_bird_state_changed\")
+	
 	set_number(game.score_current)
 	pass
 
 func _on_score_current_changed():
 	set_number(game.score_current)
+	pass
+
+func _on_bird_state_changed(bird):
+	if bird.get_state() == bird.STATE_GROUNDED:
+		hide()
 	pass
 
 func set_number(number):
@@ -97,7 +107,7 @@ func _on_bird_state_changed(bird):
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=4]
 
 resource_name = "hbox_score_last"
 script/source = "# script: hbox_score_last (built-in)
@@ -116,6 +126,8 @@ const sprite_numbers = [
 	preload(\"res://sprites/number_medium_8.png\"),
 	preload(\"res://sprites/number_medium_9.png\")
 ]
+
+signal counting_finished
 
 func _ready():
 	var anim = utils.get_main_node().get_node(\"hud/cntr_gameover/anim\")
@@ -136,6 +148,7 @@ func count_to_score():
 		yield(get_tree(), \"idle_frame\")
 	
 	game.score_best = game.score_current
+	emit_signal(\"counting_finished\")
 	pass
 
 func set_number(number):
@@ -149,7 +162,77 @@ func set_number(number):
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=8]
+
+resource_name = "hbox_score_best"
+script/source = "# script: hbox_score_best (built-in)
+
+extends HBoxContainer
+
+const sprite_numbers = [
+	preload(\"res://sprites/number_medium_0.png\"),
+	preload(\"res://sprites/number_medium_1.png\"),
+	preload(\"res://sprites/number_medium_2.png\"),
+	preload(\"res://sprites/number_medium_3.png\"),
+	preload(\"res://sprites/number_medium_4.png\"),
+	preload(\"res://sprites/number_medium_5.png\"),
+	preload(\"res://sprites/number_medium_6.png\"),
+	preload(\"res://sprites/number_medium_7.png\"),
+	preload(\"res://sprites/number_medium_8.png\"),
+	preload(\"res://sprites/number_medium_9.png\")
+]
+
+func _ready():
+	game.connect(\"score_best_changed\", self, \"_on_score_best_changed\")
+	set_number(game.score_best)
+	pass
+
+func _on_score_best_changed():
+	set_number(game.score_best)
+	pass
+
+func set_number(number):
+	for child in get_children():
+		child.free()
+	
+	for digit in utils.get_digits(number):
+		var texture_rect = TextureRect.new()
+		texture_rect.set_texture(sprite_numbers[digit])
+		add_child(texture_rect)
+	pass"
+_sections_unfolded = [ "Resource" ]
+
+[sub_resource type="GDScript" id=9]
+
+resource_name = "tex_new"
+script/source = "# script: tex_new (built-in)
+
+extends TextureRect
+
+func _ready():
+	hide()
+	
+	game.connect(\"score_best_changed\", self, \"show\")
+	pass"
+_sections_unfolded = [ "Resource" ]
+
+[sub_resource type="GDScript" id=7]
+
+resource_name = "hbox_buttons"
+script/source = "# script: hbox_buttons (built-in)
+
+extends HBoxContainer
+
+func _ready():
+	hide()
+	
+	var hbox_score_last = utils.get_main_node().find_node(\"hbox_score_last\")
+	if hbox_score_last:
+		hbox_score_last.connect(\"counting_finished\", self, \"show\")
+	pass"
+_sections_unfolded = [ "Resource" ]
+
+[sub_resource type="GDScript" id=5]
 
 resource_name = "btn_play"
 script/source = "# script: btn_play (built-in)
@@ -158,6 +241,9 @@ extends TextureButton
 
 func _ready():
 	connect(\"pressed\", self, \"_on_pressed\")
+	var hbox_score_last = utils.get_main_node().find_node(\"hbox_score_last\")
+	if hbox_score_last:
+		hbox_score_last.connect(\"counting_finished\", self, \"grab_focus\")
 	pass
 
 func _on_pressed():
@@ -165,9 +251,8 @@ func _on_pressed():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=6]
 
-resource_name = "show"
 length = 1.0
 loop = false
 step = 0.1
@@ -406,6 +491,7 @@ _sections_unfolded = [ "Rect", "Visibility" ]
 
 [node name="hbox_score_last" type="HBoxContainer" parent="hud/cntr_gameover/tex_panelscore" index="0"]
 
+editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -422,7 +508,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 1
 alignment = 2
-script = SubResource( 6 )
+script = SubResource( 4 )
 _sections_unfolded = [ "custom_constants" ]
 
 [node name="tex_number_0" type="TextureRect" parent="hud/cntr_gameover/tex_panelscore/hbox_score_last" index="0"]
@@ -443,9 +529,68 @@ size_flags_vertical = 1
 texture = ExtResource( 10 )
 stretch_mode = 0
 
-[node name="hbox_buttons" type="HBoxContainer" parent="hud/cntr_gameover" index="2"]
+[node name="hbox_score_best" type="HBoxContainer" parent="hud/cntr_gameover/tex_panelscore" index="1"]
 
 editor/display_folded = true
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 62.0
+margin_top = 37.0
+margin_right = 102.0
+margin_bottom = 47.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_constants/separation = 1
+alignment = 2
+script = SubResource( 8 )
+_sections_unfolded = [ "custom_constants" ]
+
+[node name="tex_number_0" type="TextureRect" parent="hud/cntr_gameover/tex_panelscore/hbox_score_best" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 33.0
+margin_right = 40.0
+margin_bottom = 10.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 10 )
+stretch_mode = 0
+
+[node name="tex_new" type="TextureRect" parent="hud/cntr_gameover/tex_panelscore" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 67.0
+margin_top = 29.0
+margin_right = 83.0
+margin_bottom = 36.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+texture = ExtResource( 11 )
+stretch_mode = 0
+script = SubResource( 9 )
+
+[node name="hbox_buttons" type="HBoxContainer" parent="hud/cntr_gameover" index="2"]
+
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -462,6 +607,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 9
 alignment = 1
+script = SubResource( 7 )
 
 [node name="btn_play" type="TextureButton" parent="hud/cntr_gameover/hbox_buttons" index="0"]
 
@@ -482,9 +628,9 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 11 )
-texture_pressed = ExtResource( 12 )
-script = SubResource( 4 )
+texture_normal = ExtResource( 12 )
+texture_pressed = ExtResource( 13 )
+script = SubResource( 5 )
 _sections_unfolded = [ "Textures" ]
 
 [node name="btn_scores" type="TextureButton" parent="hud/cntr_gameover/hbox_buttons" index="1"]
@@ -507,8 +653,8 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 13 )
-texture_pressed = ExtResource( 14 )
+texture_normal = ExtResource( 14 )
+texture_pressed = ExtResource( 15 )
 _sections_unfolded = [ "Textures" ]
 
 [node name="anim" type="AnimationPlayer" parent="hud/cntr_gameover" index="3"]
@@ -518,7 +664,7 @@ autoplay = ""
 playback_process_mode = 1
 playback_default_blend_time = 0.0
 playback_speed = 1.5
-anims/show = SubResource( 5 )
+anims/show = SubResource( 6 )
 blend_times = [  ]
 _sections_unfolded = [ "Playback Options" ]
 
