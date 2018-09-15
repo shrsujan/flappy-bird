@@ -26,6 +26,11 @@ func _input(event):
 	state.input(event)
 	pass
 
+func _unhandled_input(event):
+	if state.has_method("unhandled_input"):
+		state.unhandled_input(event)
+	pass
+
 func _on_body_enter(other_body):
 	if state.has_method("on_body_enter"):
 		state.on_body_enter(other_body)
@@ -120,6 +125,11 @@ class FlappingState:
 	
 	func input(event):
 		if event.is_action_pressed("flap"):
+			flap()
+		pass
+	
+	func unhandled_input(event):
+		if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.is_pressed() and !event.is_echo():
 			flap()
 		pass
 	
