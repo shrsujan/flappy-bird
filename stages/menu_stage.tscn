@@ -28,7 +28,9 @@ func _on_pressed():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[node name="main_menu" type="Node" index="0"]
+[node name="main_menu" type="Node"]
+
+editor/display_folded = true
 
 [node name="camera" type="Camera2D" parent="." index="0"]
 
