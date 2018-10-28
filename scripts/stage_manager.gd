@@ -3,6 +3,7 @@
 extends CanvasLayer
 
 const STAGE_GAME = "res://stages/game_stage.tscn"
+const STAGE_MENU = "res://stages/menu_stage.tscn"
 
 var is_changing = false
 

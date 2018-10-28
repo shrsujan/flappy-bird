@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://scenes/bird.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=2]
@@ -22,6 +22,7 @@
 [ext_resource path="res://sprites/button_score_pressed.png" type="Texture" id=20]
 [ext_resource path="res://sprites/rect_black.png" type="Texture" id=21]
 [ext_resource path="res://sprites/button_resume.png" type="Texture" id=22]
+[ext_resource path="res://sprites/button_menu.png" type="Texture" id=23]
 
 [sub_resource type="GDScript" id=1]
 
@@ -78,8 +79,8 @@ func _on_score_current_changed():
 	pass
 
 func _on_bird_state_changed(bird):
-	if bird.get_state() == bird.STATE_GROUNDED:
-		hide()
+	if bird.get_state() == bird.STATE_HIT: hide()
+	if bird.get_state() == bird.STATE_GROUNDED: hide()
 	pass
 
 func set_number(number):
@@ -102,10 +103,20 @@ extends TextureButton
 
 func _ready():
 	connect(\"pressed\", self, \"_on_pressed\")
+	
+	var bird = utils.get_main_node().get_node(\"bird\")
+	if bird: bird.connect(\"state_changed\", self, \"_on_bird_state_changed\")
 	pass
 
 func _on_pressed():
 	get_tree().paused = true
+	pass
+
+func _on_bird_state_changed(bird):
+	if bird.get_state() == bird.STATE_HIT:
+		hide()
+	if bird.get_state() == bird.STATE_GROUNDED:
+		hide()
 	pass
 "
 _sections_unfolded = [ "Resource" ]
@@ -468,6 +479,24 @@ func _on_pressed():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
+[sub_resource type="GDScript" id=17]
+
+resource_name = "btn_menu"
+script/source = "# script: btn_menu (built-in)
+
+extends TextureButton
+
+func _ready():
+	connect(\"pressed\", self, \"_on_pressed\")
+	pass
+
+func _on_pressed():
+	get_tree().paused = false
+	stage_manager.change_stage(stage_manager.STAGE_MENU)
+	pass
+"
+_sections_unfolded = [ "Resource" ]
+
 [node name="world" type="Node" index="0"]
 
 [node name="bird" parent="." index="0" instance=ExtResource( 1 )]
@@ -559,7 +588,6 @@ _sections_unfolded = [ "Rect" ]
 
 [node name="hbox_score" type="HBoxContainer" parent="hud" index="1"]
 
-editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -961,5 +989,30 @@ group = null
 texture_normal = ExtResource( 22 )
 script = SubResource( 16 )
 _sections_unfolded = [ "Pause", "Rect", "Textures" ]
+
+[node name="btn_menu" type="TextureButton" parent="hud/cntr_pause" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 52.0
+margin_top = 121.0
+margin_right = 92.0
+margin_bottom = 135.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+texture_normal = ExtResource( 23 )
+script = SubResource( 17 )
+_sections_unfolded = [ "Rect", "Textures" ]
 
 

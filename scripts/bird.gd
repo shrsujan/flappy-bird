@@ -57,7 +57,7 @@ func get_state():
 	elif state is FlappingState:
 		return STATE_FLAPPING
 	elif state is HitState:
-		return STATE_FLYING
+		return STATE_HIT
 	elif state is GroundedState:
 		return STATE_GROUNDED
 	pass
