@@ -28,6 +28,7 @@ func change_stage(stage_path):
 	# change stage
 	get_tree().change_scene(stage_path)
 	emit_signal("stage_changed")
+	get_tree().paused = false
 	
 	# fade from black
 	get_node("anim").play("fade_out")

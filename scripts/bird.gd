@@ -3,6 +3,7 @@
 extends RigidBody2D
 
 onready var state = FlyingState.new(self)
+var prev_state
 
 var speed = 50
 
@@ -38,6 +39,7 @@ func _on_body_enter(other_body):
 
 func set_state(new_state):
 	state.exit()
+	prev_state = get_state()
 	
 	if new_state == STATE_FLYING:
 		state = FlyingState.new(self)
@@ -143,11 +145,18 @@ class HitState:
 	
 	func _init(bird):
 		self.bird = bird
+		var audio_hit = bird.get_node("audio_hit")
+		audio_hit.play()
+		audio_hit.connect("finished", self, "_play_audio_fall")
 		bird.linear_velocity = Vector2(0, 0)
 		bird.angular_velocity = 2
 		
 		var other_body = bird.get_colliding_bodies()[0]
 		bird.add_collision_exception_with(other_body)
+		pass
+	
+	func _play_audio_fall():
+		bird.get_node("audio_fall").play()
 		pass
 	
 	func update(delta):
@@ -170,6 +179,8 @@ class GroundedState:
 	
 	func _init(bird):
 		self.bird = bird
+		if bird.prev_state != bird.STATE_HIT:
+			bird.get_node("audio_hit").play()
 		bird.linear_velocity = Vector2(0, 0)
 		bird.angular_velocity = 0
 		pass

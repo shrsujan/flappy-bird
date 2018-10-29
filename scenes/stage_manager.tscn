@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scripts/stage_manager.gd" type="Script" id=1]
 [ext_resource path="res://sprites/rect_black.png" type="Texture" id=2]
+[ext_resource path="res://sounds/sfx_swooshing.wav" type="AudioStream" id=3]
 
 [sub_resource type="Animation" id=1]
 
@@ -20,6 +21,18 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 0.25, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("anim/audio_stage_change:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.5 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="Animation" id=2]
@@ -43,17 +56,18 @@ tracks/0/keys = {
 
 [node name="stage_manager" type="CanvasLayer" index="0"]
 
+pause_mode = 2
 layer = 5
 offset = Vector2( 0, 0 )
 rotation = 0.0
 scale = Vector2( 1, 1 )
 transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 script = ExtResource( 1 )
+_sections_unfolded = [ "Pause" ]
 
 [node name="tex_black" type="TextureRect" parent="." index="0"]
 
 visible = false
-self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -82,5 +96,14 @@ anims/fade_in = SubResource( 1 )
 anims/fade_out = SubResource( 2 )
 blend_times = [  ]
 _sections_unfolded = [ "Playback Options" ]
+
+[node name="audio_stage_change" type="AudioStreamPlayer" parent="anim" index="0"]
+
+stream = ExtResource( 3 )
+volume_db = 0.0
+pitch_scale = 1.0
+autoplay = false
+mix_target = 0
+bus = "Master"
 
 

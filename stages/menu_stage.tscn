@@ -30,8 +30,6 @@ _sections_unfolded = [ "Resource" ]
 
 [node name="main_menu" type="Node"]
 
-editor/display_folded = true
-
 [node name="camera" type="Camera2D" parent="." index="0"]
 
 offset = Vector2( -72, 0 )
@@ -69,6 +67,7 @@ position = Vector2( 72, 110 )
 
 [node name="hud" type="CanvasLayer" parent="." index="4"]
 
+editor/display_folded = true
 layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
