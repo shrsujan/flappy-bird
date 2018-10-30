@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://scenes/bird.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=2]
@@ -26,7 +26,51 @@
 
 [sub_resource type="GDScript" id=1]
 
-resource_name = "btn_instructions"
+resource_name = "shaker"
+script/source = "# script: shaker (built-in)
+
+extends Node
+
+onready var camera = get_parent()
+
+var time = 0
+
+const duration = 0.18
+const magnitude = 3
+
+func _ready():
+	var bird = utils.get_main_node().get_node(\"bird\")
+	if bird: bird.connect(\"state_changed\", self, \"_on_bird_state_changed\")
+	pass
+
+func _on_bird_state_changed(bird):
+	if bird.get_state() == bird.STATE_HIT or bird.get_state() == bird.STATE_GROUNDED:
+		shake()
+		bird.disconnect(\"state_changed\", self, \"_on_bird_state_changed\")
+	pass
+
+func shake():
+	var initial_offset = camera.get_offset()
+	
+	while time < duration:
+		time += get_process_delta_time()
+		time = min(time, duration)
+		
+		var offset = Vector2()
+		offset.x = rand_range(-magnitude, magnitude)
+		offset.y = rand_range(-magnitude, magnitude)
+		camera.set_offset(initial_offset + offset)
+		
+		yield(get_tree(), \"idle_frame\")
+		pass
+	
+	time = 0
+	camera.set_offset(initial_offset)
+	pass"
+_sections_unfolded = [ "Resource" ]
+
+[sub_resource type="GDScript" id=2]
+
 script/source = "# script: btn_instructions (built-in)
 
 extends TextureButton
@@ -45,9 +89,8 @@ func _on_pressed():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=3]
 
-resource_name = "hbox_score"
 script/source = "# script: hbox_score (built-in)
 
 extends HBoxContainer
@@ -94,9 +137,8 @@ func set_number(number):
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=4]
 
-resource_name = "btn_pause"
 script/source = "# script: btn_pause (built-in)
 
 extends TextureButton
@@ -121,7 +163,7 @@ func _on_bird_state_changed(bird):
 "
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=5]
 
 script/source = "# script: cntr_gameover (built-in)
 
@@ -141,7 +183,7 @@ func _on_bird_state_changed(bird):
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=6]
 
 script/source = "# script: hbox_score_last (built-in)
 
@@ -195,7 +237,7 @@ func set_number(number):
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=7]
 
 script/source = "# script: hbox_score_best (built-in)
 
@@ -234,7 +276,7 @@ func set_number(number):
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=8]
 
 script/source = "# script: tex_new (built-in)
 
@@ -247,7 +289,7 @@ func _ready():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=8]
+[sub_resource type="GDScript" id=9]
 
 script/source = "# script: tex_medal (built-in)
 
@@ -282,7 +324,7 @@ func show_medal():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="SpriteFrames" id=9]
+[sub_resource type="SpriteFrames" id=10]
 
 animations = [ {
 "frames": [ ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ) ],
@@ -291,7 +333,7 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="GDScript" id=10]
+[sub_resource type="GDScript" id=11]
 
 script/source = "# script: spr_spark (built-in)
 
@@ -317,7 +359,7 @@ func to_random_pos():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id=12]
 
 length = 0.5
 loop = true
@@ -349,7 +391,7 @@ tracks/1/keys = {
 } ]
 }
 
-[sub_resource type="GDScript" id=12]
+[sub_resource type="GDScript" id=13]
 
 script/source = "# script: hbox_buttons (built-in)
 
@@ -364,7 +406,7 @@ func _ready():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=13]
+[sub_resource type="GDScript" id=14]
 
 script/source = "# script: btn_play (built-in)
 
@@ -382,7 +424,7 @@ func _on_pressed():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="Animation" id=14]
+[sub_resource type="Animation" id=15]
 
 length = 1.0
 loop = false
@@ -436,9 +478,8 @@ tracks/3/keys = {
 "values": [ Vector2( 16, 270 ), Vector2( 16, 90 ) ]
 }
 
-[sub_resource type="GDScript" id=15]
+[sub_resource type="GDScript" id=16]
 
-resource_name = "cntr_pause"
 script/source = "# script: cntr_pause (built-in)
 
 extends Container
@@ -463,9 +504,8 @@ func _on_resume():
 "
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=16]
+[sub_resource type="GDScript" id=17]
 
-resource_name = "btn_resume"
 script/source = "# script: btn_resume (built-in)
 
 extends TextureButton
@@ -479,9 +519,8 @@ func _on_pressed():
 	pass"
 _sections_unfolded = [ "Resource" ]
 
-[sub_resource type="GDScript" id=17]
+[sub_resource type="GDScript" id=18]
 
-resource_name = "btn_menu"
 script/source = "# script: btn_menu (built-in)
 
 extends TextureButton
@@ -527,6 +566,10 @@ editor_draw_limits = false
 editor_draw_drag_margin = false
 script = ExtResource( 2 )
 
+[node name="shaker" type="Node" parent="camera" index="0"]
+
+script = SubResource( 1 )
+
 [node name="spawner_ground" parent="." index="2" instance=ExtResource( 3 )]
 
 [node name="background" parent="." index="3" instance=ExtResource( 4 )]
@@ -562,7 +605,7 @@ action_mode = 0
 enabled_focus_mode = 2
 shortcut = null
 group = null
-script = SubResource( 1 )
+script = SubResource( 2 )
 _sections_unfolded = [ "Textures" ]
 
 [node name="texture" type="TextureRect" parent="hud/btn_instruction" index="0"]
@@ -602,7 +645,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 2
 alignment = 1
-script = SubResource( 2 )
+script = SubResource( 3 )
 _sections_unfolded = [ "Mouse" ]
 
 [node name="tex_number_0" type="TextureRect" parent="hud/hbox_score" index="0"]
@@ -646,7 +689,7 @@ enabled_focus_mode = 2
 shortcut = null
 group = null
 texture_normal = ExtResource( 8 )
-script = SubResource( 3 )
+script = SubResource( 4 )
 _sections_unfolded = [ "Rect" ]
 
 [node name="cntr_gameover" type="Container" parent="hud" index="3"]
@@ -665,7 +708,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-script = SubResource( 4 )
+script = SubResource( 5 )
 _sections_unfolded = [ "Visibility" ]
 
 [node name="tex_gameover" type="TextureRect" parent="hud/cntr_gameover" index="0"]
@@ -728,7 +771,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 1
 alignment = 2
-script = SubResource( 5 )
+script = SubResource( 6 )
 _sections_unfolded = [ "custom_constants" ]
 
 [node name="tex_number_0" type="TextureRect" parent="hud/cntr_gameover/tex_panelscore/hbox_score_last" index="0"]
@@ -768,7 +811,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 1
 alignment = 2
-script = SubResource( 6 )
+script = SubResource( 7 )
 _sections_unfolded = [ "custom_constants" ]
 
 [node name="tex_number_0" type="TextureRect" parent="hud/cntr_gameover/tex_panelscore/hbox_score_best" index="0"]
@@ -807,7 +850,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 texture = ExtResource( 12 )
 stretch_mode = 0
-script = SubResource( 7 )
+script = SubResource( 8 )
 
 [node name="tex_medal" type="TextureRect" parent="hud/cntr_gameover/tex_panelscore" index="3"]
 
@@ -827,13 +870,13 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 texture = ExtResource( 13 )
 stretch_mode = 0
-script = SubResource( 8 )
+script = SubResource( 9 )
 
 [node name="spr_spark" type="AnimatedSprite" parent="hud/cntr_gameover/tex_panelscore/tex_medal" index="0"]
 
-frames = SubResource( 9 )
+frames = SubResource( 10 )
 animation = "default"
-script = SubResource( 10 )
+script = SubResource( 11 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="anim" type="AnimationPlayer" parent="hud/cntr_gameover/tex_panelscore/tex_medal/spr_spark" index="0"]
@@ -843,7 +886,7 @@ autoplay = ""
 playback_process_mode = 1
 playback_default_blend_time = 0.0
 playback_speed = 0.8
-anims/shine = SubResource( 11 )
+anims/shine = SubResource( 12 )
 blend_times = [  ]
 _sections_unfolded = [ "Playback Options" ]
 
@@ -865,7 +908,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 9
 alignment = 1
-script = SubResource( 12 )
+script = SubResource( 13 )
 
 [node name="btn_play" type="TextureButton" parent="hud/cntr_gameover/hbox_buttons" index="0"]
 
@@ -888,7 +931,7 @@ shortcut = null
 group = null
 texture_normal = ExtResource( 17 )
 texture_pressed = ExtResource( 18 )
-script = SubResource( 13 )
+script = SubResource( 14 )
 _sections_unfolded = [ "Textures" ]
 
 [node name="btn_scores" type="TextureButton" parent="hud/cntr_gameover/hbox_buttons" index="1"]
@@ -922,7 +965,7 @@ autoplay = ""
 playback_process_mode = 1
 playback_default_blend_time = 0.0
 playback_speed = 1.5
-anims/show = SubResource( 14 )
+anims/show = SubResource( 15 )
 blend_times = [  ]
 _sections_unfolded = [ "Playback Options" ]
 
@@ -941,7 +984,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-script = SubResource( 15 )
+script = SubResource( 16 )
 _sections_unfolded = [ "Pause", "Rect" ]
 
 [node name="tex_background" type="TextureRect" parent="hud/cntr_pause" index="0"]
@@ -986,7 +1029,7 @@ enabled_focus_mode = 2
 shortcut = null
 group = null
 texture_normal = ExtResource( 22 )
-script = SubResource( 16 )
+script = SubResource( 17 )
 _sections_unfolded = [ "Pause", "Rect", "Textures" ]
 
 [node name="btn_menu" type="TextureButton" parent="hud/cntr_pause" index="2"]
@@ -1011,7 +1054,7 @@ enabled_focus_mode = 2
 shortcut = null
 group = null
 texture_normal = ExtResource( 23 )
-script = SubResource( 17 )
+script = SubResource( 18 )
 _sections_unfolded = [ "Rect", "Textures" ]
 
 
